@@ -1,49 +1,61 @@
-var rs = require('readline-sync')
+const rs = require('readline-sync');
+//Initiate Variables
+const gridSize = rs.questionInt('How large should the grid be?');
+const myGrid = createGrid(gridSize);
+const enemyGrid = createGrid(gridSize);
+const myShips = 3;
+const enemyShips = 3;
 
-const board = ['A1',' B1',' C1',
-'A2', 'B2', 'C2',
-'A3', 'B3', 'C3'];
 
-console.log(board)
+//Game
+printGrid(enemyGrid, 'True')
+printGrid(myGrid)
 
-const shipPlacement = [];
-let hitCount = 0;
-let winFlag = 'False';
+for(i=1; i<4; i++){
+    let x = rs.questionInt(`Enter the X coordinate for ship ${i}:`);
+    let y = rs.questionInt(`Enter the Y coordinate for ship${i}:`);
+    placeShips(x, y, 'O', myGrid);
+}
+ 
+//Functions  
 
-const shipPlacer = function(board){
-    let i = Math.floor(Math.random()*board.length);
-    shipPlacement.push(board[i]);
-};
+function createGrid(size){
+    let grid=[];
+    for(let i=0; i < size; i++){
+        grid[i] = [];
+        for (let j =0; j < size; j++){
+            grid[i][j]= '-';
+        } 
+    }
+    return grid;
+}
 
-shipPlacer(board);
-
-let fired = rs.question(board, 'Where would you like to fire?')
-
-const fire = function(){
-    let index = board.findIndex(x => x === fired);
-    board.slice[index];
-if (fired in shipPlacement){
-    console.log('HIT!')
-    hitCount +=1
-    } else{
-        console.log('Miss')
+function printGrid(grid, isEnemy= 'False'){
+    const headers = createHeaders(grid.length);
+    console.log(headers);
+    for (i=0; i<grid.length; i++){
+        let rowStr = i + ' ';
+        for (let cell of grid[1]){
+            if (isEnemy && cell == 'O'){
+                rowStr += '- '; 
+            } else{
+                rowStr += cell + ' ';
+            }
+        }
+        console.log(rowStr);
     }
 }
 
-const winCheck = function(counter) {
-    if (counter === 2){
-        console.log('You sank my battleships!')
-        let winFlag = 'True'
-    } else {
-        let winFlag = 'False'
-        }
-}   
-
-for (; hitCount<2;) {
-    
-    fire();
-    winCheck(hitCount);
-    console.log(hitCount);
+function createHeaders(size){
+    let result = '  ';
+    for(let i=0; i<size; i++){
+         result += i + ' ';
+    }
+    return result;
 }
 
-console.log(board);
+function placeShips(x, y, m, grid){
+    grid[x][y] == m;
+    printGrid(enemyGrid);
+    printGrid(myGrid);
+}
