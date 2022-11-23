@@ -55,7 +55,7 @@ function createHeaders(size){
 }
 
 function placeShips(x, y, m, grid){
-    grid[x][y] == m;
+    grid[y][x] == m;
     printGrid(enemyGrid);
     printGrid(myGrid);
 }
