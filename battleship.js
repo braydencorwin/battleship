@@ -3,10 +3,10 @@ const rs = require('readline-sync');
 const gridSize = rs.questionInt('How large should the grid be?');
 const myGrid = createGrid(gridSize);
 const enemyGrid = createGrid(gridSize);
-const myShips = 3;
-const enemyShips = 3;
-let enemyLocations = {}
-
+let myShips = 3;
+let enemyShips = 3;
+let enemyLocations = {};
+let fired = {};
 
 //Game
 printGrid(enemyGrid, true)
@@ -16,19 +16,36 @@ for(let i=1; i<4; i++){
     let x = rs.questionInt(`Enter the X coordinate for ship ${i}:`);
     let y = rs.questionInt(`Enter the Y coordinate for ship${i}:`);
     placeShips(x, y, 'O', myGrid);
-    placeEnemy('-');
+    placeEnemy('O', enemyGrid, gridSize);
     printGrid(myGrid);
-    printGrid(enemyGrid);
+    printGrid(enemyGrid, true);
 }
 
 while(myShips>0 && enemyShips>0){
     let x = rs.questionInt(`Enter the X coordinate for attack:`);
     let y = rs.questionInt(`Enter the Y coordinate for attack:`);
-    attack(x, y, enemyGrid)
-    attack(randInt(max), randInt(max), myGrid)
+    if(!fired[`${x}-${y}`]){
+        fired[`${x}-${y}`] = true;
+    }else{
+        console.log('You already fired here! MISS!')
+    }
+    if(attack(x, y, enemyGrid)){
+        enemyShips--;
+    }
+    printGrid(enemyGrid, true);
 
+    if (attack(randInt(gridSize), randInt(gridSize), myGrid)){
+        myShips--;    
+        console.log(myShips)
+    }
+    printGrid(myGrid);
 }
- 
+
+if (myShips == 0){
+    console.log('You lose!')
+} else{
+    console.log('You Sank My Battleships!')
+}
 //Functions  
 
 function createGrid(size){
@@ -100,13 +117,14 @@ function randInt(max){
 }
 
 function attack(x, y, grid){
-    if(enemyLocations[`${x}-${y}`]){
+    if(grid[y][x]== 'O'){
         grid[y][x]='!';
-        enemyShips--;
-        console.log('Hit!');
-    } else{
+        return true;
+    } else if(grid[y][x]=='-'){
         grid[y][x] ='X';
-        console.log('Miss!');
+        return false
+    }else{ 
+        return false
     }
-
 }
+
