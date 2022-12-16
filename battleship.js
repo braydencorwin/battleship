@@ -9,42 +9,53 @@ let enemyLocations = {};
 let fired = {};
 
 //Game
-printGrid(enemyGrid, true)
-printGrid(myGrid)
+let playFlag = true
+while(playFlag){
 
-for(let i=1; i<4; i++){
-    let x = rs.questionInt(`Enter the X coordinate for ship ${i}:`);
-    let y = rs.questionInt(`Enter the Y coordinate for ship${i}:`);
-    placeShips(x, y, 'O', myGrid);
-    placeEnemy('O', enemyGrid, gridSize);
-    printGrid(myGrid);
-    printGrid(enemyGrid, true);
-}
+    printGrid(enemyGrid, true)
+    printGrid(myGrid)
 
-while(myShips>0 && enemyShips>0){
-    let x = rs.questionInt(`Enter the X coordinate for attack:`);
-    let y = rs.questionInt(`Enter the Y coordinate for attack:`);
-    if(!fired[`${x}-${y}`]){
-        fired[`${x}-${y}`] = true;
-    }else{
-        console.log('You already fired here! MISS!')
+    for(let i=1; i<4; i++){
+        let x = rs.questionInt(`Enter the X coordinate for ship ${i}:`);
+        let y = rs.questionInt(`Enter the Y coordinate for ship${i}:`);
+        placeShips(x, y, 'O', myGrid);
+        placeEnemy('O', enemyGrid, gridSize);
+        printGrid(myGrid);
+        printGrid(enemyGrid, true);
     }
-    if(attack(x, y, enemyGrid)){
-        enemyShips--;
-    }
-    printGrid(enemyGrid, true);
 
-    if (attack(randInt(gridSize), randInt(gridSize), myGrid)){
-        myShips--;    
-        console.log(myShips)
-    }
-    printGrid(myGrid);
-}
+    while(myShips>0 && enemyShips>0){
+        let x = rs.questionInt(`Enter the X coordinate for attack:`);
+        let y = rs.questionInt(`Enter the Y coordinate for attack:`);
+        if(!fired[`${x}-${y}`]){
+            fired[`${x}-${y}`] = true;
+        }else{
+            console.log('You already fired here! MISS!')
+        }
+        if(attack(x, y, enemyGrid)){
+            enemyShips--;
+        }
+        printGrid(enemyGrid, true);
 
-if (myShips == 0){
-    console.log('You lose!')
-} else{
-    console.log('You Sank My Battleships!')
+        if (attack(randInt(gridSize), randInt(gridSize), myGrid)){
+            myShips--;    
+            console.log(myShips)
+        }
+        printGrid(myGrid);
+    }
+
+    if (myShips == 0){
+        console.log('You lose!')
+    } else{
+        console.log('You Sank My Battleships!')
+    }
+    
+    if(rs.keyInYN('Do you want to play again? Y/N')){
+        playFlag = true
+    } else{
+        playFlag = false
+    }
+
 }
 //Functions  
 
@@ -127,4 +138,6 @@ function attack(x, y, grid){
         return false
     }
 }
+
+
 
