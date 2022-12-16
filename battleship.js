@@ -5,6 +5,7 @@ const myGrid = createGrid(gridSize);
 const enemyGrid = createGrid(gridSize);
 let myShips = 3;
 let enemyShips = 3;
+let ships = [2, 3, 3, 4, 5]
 let enemyLocations = {};
 let fired = {};
 
@@ -16,9 +17,12 @@ while(playFlag){
     printGrid(myGrid)
 
     for(let i=1; i<4; i++){
-        let x = rs.questionInt(`Enter the X coordinate for ship ${i}:`);
-        let y = rs.questionInt(`Enter the Y coordinate for ship${i}:`);
-        placeShips(x, y, 'O', myGrid);
+        for(let j=1; j<ships; j++){
+            let size = ships[j]
+            let x = rs.questionInt(`Enter the X coordinate for ship ${i}:`);
+            let y = rs.questionInt(`Enter the Y coordinate for ship${i}:`);
+            buildShips(size, x, y, 'O', myGrid)
+        }
         placeEnemy('O', enemyGrid, gridSize);
         printGrid(myGrid);
         printGrid(enemyGrid, true);
@@ -95,9 +99,7 @@ function createHeaders(size){
     return result;
 }
 
-function placeShips(x, y, m, grid){
-    grid[y][x] = m;
-}
+
 
 function attack(x, y, grid){
     if(grid[y][x]=='O'){
@@ -137,7 +139,22 @@ function attack(x, y, grid){
     }else{ 
         return false
     }
+} 
+
+/* function placeShips(x, y, m, grid){
+    grid[y][x] = m;
+} */
+
+function buildShips(size, x, y, m, grid){
+    let overlapFlag = false
+    for (let i=0; i<size; i++){
+        if (grid[y][x]=m){
+            let overlapFlag = true
+        }
+    }
+    if(!overlapFlag)
+    for (let i=0; i<size; i++){
+        grid[y][x]=m;
+        y++
+    }
 }
-
-
-
