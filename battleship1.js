@@ -1,6 +1,6 @@
 const rs = require('readline-sync');
 //Initiate Variables
-const gridSize = rs.questionInt('How large should the grid be?');
+const gridSize = 10
 const myGrid = createGrid(gridSize);
 const enemyGrid = createGrid(gridSize);
 let myScore =0;
@@ -127,15 +127,16 @@ function winCheck(){
 
 function randLocation (grid, max, ship) {
     let didPlace = false;
-    let valid = false;
     let directionString;
+
 
     while (!didPlace) {
         let x = randInt(max);
         let y = randInt(max);
 
-        [valid, directionString] = randomDirection (x,y,ship, 'O');
-        if(valid){
+
+        [directionString] = randomDirection (x,y,ship,'O');
+        if(shipCheck(directionString,x,y,ship,grid)){
             placeShip(x, y, 'O', grid, directionString, ship);
             didPlace = true;
         }
@@ -155,11 +156,10 @@ function randomDirection (column, row, ship, m) {
                 this.grid[row][column + i] === m ||
                 this.grid[row][column + i] === undefined
             )
-            return [valid, directionString];
+            {return [directionString];}
         } 
-        valid = true;
         directionString = "right";
-        return [valid, directionString];
+        return [directionString];
     } else if (direction === 2) {
         //Left
         for(let i=0; i>ship.size; i++){
@@ -167,10 +167,9 @@ function randomDirection (column, row, ship, m) {
                 column - i < 0 ||
                 this.grid[row][column - i] === m ||
                 this.grid[row][column - i] === undefined
-            )
-            return [valid, directionString];
+            ){return [directionString];}
+            
         } 
-        valid = true;
         directionString = "left";
         return [valid, directionString];
 
@@ -182,11 +181,10 @@ function randomDirection (column, row, ship, m) {
                 this.grid[row+i][column] === m ||
                 this.grid[row+i][column] === undefined
             )
-            return [valid, directionString];
+            {return [directionString];}
         } 
-        valid = true;
         directionString = "up";
-        return [valid, directionString];
+        return [directionString];
     } else if (direction === 4) {
         //Left
         for(let i=0; i>ship.size; i++){
@@ -195,11 +193,10 @@ function randomDirection (column, row, ship, m) {
                 this.grid[row-i][column] === m ||
                 this.grid[row-i][column] === undefined
             )
-            return [valid, directionString];
+            {return  [directionString];}
         } 
-        valid = true;
         directionString = "down";
-        return [valid, directionString];
+        return [directionString];
 
     }
 };
@@ -232,23 +229,34 @@ function placeShip(x, y, m, grid, direction, ship) {
     } 
 };
 
-
+function shipCheck(direction, x, y, ship, ){
+    if(direction === 'down'){
+        y + ship.size< (gridSize-1) ? true : false
+    }
+    else if(direction == "up"){
+        return y-ship.size > 0 ? true : false
+    } 
+    else if(direction == "left"){
+        return x- ship.size > 0 ? true : false
+    } 
+    else if(direction == "right"){
+        return  x + ship.size < (gridSize -1) ? true : false
+    } 
+}
         
 //Game
 
 let playFlag = true
 
 while(playFlag){
-    for(i = 0; i< 4; i++){
-        for(let j=0; j<myShips.length; j++){  //Place USER ships
+    for(i = 0; i< 2; i++){
+        for(let j=0; j<=3; j++){  //Place USER ships
             randLocation(myGrid, gridSize, myShips[j])
           }
-          for(let j=0; j<enemyShips.length; j++){ //Place CPU Ships
+          for(let j=0; j<=3; j++){ //Place CPU Ships
             randLocation(enemyGrid, gridSize, enemyShips[j])
           }
     };
-    printGrid(myGrid);
-    printGrid(enemyGrid, true);
 
     while(!winCheck(myShips) && !winCheck(enemyShips)){
         //user turn
@@ -266,10 +274,10 @@ while(playFlag){
     };
 
     //Confirm Winner
-    if(myScore == 4){
+    if(myScore == 3){
         console.log('You Sank My Battleships!')
     }
-    if(enemyScore == 4){
+    if(enemyScore == 3){
         console.log('I Sank Your Battleships!')
     }
     
@@ -280,3 +288,4 @@ while(playFlag){
         playFlag = false
     }
 };
+ 

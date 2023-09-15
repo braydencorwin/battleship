@@ -1,0 +1,100 @@
+const rs = require('readline-sync');    
+
+//Initiate Variables
+let playFlag;
+let gridSize = 3
+const myGrid = createGrid(gridSize);
+const enemyGrid = createGrid(gridSize);
+let fireList = [];
+let myScore = 0
+
+//Functions
+
+function randInt(max){
+    return Math.floor(Math.random() * Math.floor(max))
+}
+
+function createGrid(size){
+    //Creates main Board
+    let grid=[];
+    for(let i=0; i < size; i++){
+        grid[i] = [];
+        for (let j =0; j < size; j++){
+            grid[i][j]= '-';
+        } 
+    }
+    return grid;
+};
+
+function attack(x,grid){
+    if(fireList.indexOf(`${x}-${y}`) !== -1){
+        console.log('Already Fired Here!')
+    }else if(grid[y][x] === 'O'){
+            grid[y][x] = 'O';
+            fireList.push(`${x}-${y}`)
+            console.log('Hit!');
+    }else{
+        console.log('Miss')
+        fireList.push(`${x}-${y}`)
+    }
+
+}
+
+function placeShip(x, y, m, grid) {
+        if(grid[y][x] != m){
+            grid[y][x] = m
+        }else{
+            placeShip(x,y,m,grid)
+        }
+};
+
+
+function sinkCheck(ships, scoreCounter){
+    for(i = 0; i< ships.length; i++){
+        if(ships[i].size == 0){
+            ships = ships.filter(ship => ship.size=0); //removes ships that have been sunk
+            scoreCounter +=1; // Awards a point for sinking a ship
+            console.log('You sank a ship!');
+        }
+    } 
+};
+function winCheck(){
+    if(myScore == 4 || enemyScore == 4){
+        return true;
+    }
+}
+
+if( rs.keyInYN(['Would you like to begin?(Y/N)'[Y,N]])){
+    let playFlag = true
+}
+
+while(playFlag){
+    while(!winCheck(myShips) && !winCheck(enemyShips)){
+        for(let i = 0; i< 2; i++){
+            let x = randInt;
+            let y = randInt;
+            placeShip(x, y, 'O', enemyGrid)
+        }
+        //user turn
+        let x = rs.questionInt(`Enter the X coordinate for attack:`);
+        let y = rs.questionInt(`Enter the Y coordinate for attack:`);
+        attack(x,y,enemyShips,myFire, enemyGrid);
+        sinkCheck(enemyShips, myScore)
+    };
+
+    //Confirm Winner
+    if(myScore == 3){
+        console.log('You Sank My Battleships!')
+    }
+    if(enemyScore == 4){
+        console.log('I Sank Your Battleships!')
+    }
+    
+    //Asks To Restart Game
+    if(rs.keyInYN('Do you want to play again? Y/N')){
+        playFlag = true
+        myScore=0
+    } else{
+        playFlag = false
+    }
+};
