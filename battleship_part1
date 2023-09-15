@@ -1,13 +1,18 @@
 const rs = require('readline-sync');    
 
 //Initiate Variables
-let playFlag;
 let gridSize = 3
 const myGrid = createGrid(gridSize);
 const enemyGrid = createGrid(gridSize);
 let fireList = [];
 let myScore = 0
-
+let enemyScore = 0
+let playFlag;
+if(rs.keyInYN('Would you like to play Battleship?')){
+    playFlag = true
+} else{
+    playFlag = false
+}
 //Functions
 
 function randInt(max){
@@ -26,13 +31,14 @@ function createGrid(size){
     return grid;
 };
 
-function attack(x,grid){
+function attack(x,y,grid){
     if(fireList.indexOf(`${x}-${y}`) !== -1){
         console.log('Already Fired Here!')
     }else if(grid[y][x] === 'O'){
             grid[y][x] = 'O';
             fireList.push(`${x}-${y}`)
             console.log('Hit!');
+            myScore++
     }else{
         console.log('Miss')
         fireList.push(`${x}-${y}`)
@@ -41,11 +47,9 @@ function attack(x,grid){
 }
 
 function placeShip(x, y, m, grid) {
-        if(grid[y][x] != m){
+    if(grid[y][x] != m){
             grid[y][x] = m
-        }else{
-            placeShip(x,y,m,grid)
-        }
+    }
 };
 
 
@@ -59,27 +63,25 @@ function sinkCheck(ships, scoreCounter){
     } 
 };
 function winCheck(){
-    if(myScore == 4 || enemyScore == 4){
+    if(myScore == 3 || enemyScore == 4){
         return true;
     }
 }
 
-if( rs.keyInYN(['Would you like to begin?(Y/N)'[Y,N]])){
-    let playFlag = true
-}
+
+  
 
 while(playFlag){
-    while(!winCheck(myShips) && !winCheck(enemyShips)){
+    while(!winCheck()){
         for(let i = 0; i< 2; i++){
-            let x = randInt;
-            let y = randInt;
+            let x = randInt(gridSize);
+            let y = randInt(gridSize);
             placeShip(x, y, 'O', enemyGrid)
         }
         //user turn
         let x = rs.questionInt(`Enter the X coordinate for attack:`);
         let y = rs.questionInt(`Enter the Y coordinate for attack:`);
-        attack(x,y,enemyShips,myFire, enemyGrid);
-        sinkCheck(enemyShips, myScore)
+        attack(x,y, enemyGrid);
     };
 
     //Confirm Winner
@@ -91,9 +93,10 @@ while(playFlag){
     }
     
     //Asks To Restart Game
-    if(rs.keyInYN('Do you want to play again? Y/N')){
+    if(rs.keyInYN('You have destroyed all battleships. Would you like to play again? Y/N')){
         playFlag = true
         myScore=0
+        fireList = []
     } else{
         playFlag = false
     }
