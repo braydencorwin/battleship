@@ -290,8 +290,7 @@ let playFlag = true
 while(playFlag){
     for(i = 0; i < myShips.length; i++){//Place USER ships
             randLocation(myGrid, gridSize, myShips[i])
-          
-          console.log(`Placed Ship ${i}`)//Place CPU Ships
+          //Place CPU Ships
             randLocation(enemyGrid, gridSize, enemyShips[i])
     };
 
