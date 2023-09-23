@@ -5,6 +5,25 @@ const myGrid = createGrid(gridSize);
 const enemyGrid = createGrid(gridSize);
 let myScore =0;
 let enemyScore = 0;
+let playFlag;
+if(rs.keyIn('Press Any Button to Begin')){
+    playFlag = true
+} else{
+    playFlag = false
+};
+let coordKey = {
+    A : 0,
+    B : 1,
+    C : 2,
+    D : 3,
+    E : 4,
+    F : 5,
+    G : 6,
+    H : 7, 
+    I : 8,
+    J : 9,
+};
+
 
 let myShips = [
     ship1 = {
@@ -27,7 +46,7 @@ let myShips = [
         size:5,
         coordinates: []
     },
-]
+];
 let enemyShips = [
     ship1 = {
         size:2,
@@ -49,15 +68,15 @@ let enemyShips = [
         size:5,
         coordinates: []
     },
-]
+];
 
-let myFire= []
-let enemyFire =[]
+let myFire= [];
+let enemyFire =[];
 //Functions
 
 function randInt(max){
     return Math.floor(Math.random() * Math.floor(max))
-}
+};
 
 function createGrid(size){
     //Creates main Board
@@ -93,7 +112,7 @@ function createHeaders(size){
     //adds the headers to rows and columns
     let result = '  ';
     for(let i=0; i<size; i++){
-         result += i + ' ';
+         result += getLetter(coordKey, i)  + ' ';
     }
     return result;
 };
@@ -114,17 +133,8 @@ function attack(x,y,fireList,grid, isEnemy = false){
         grid[y][x] = 'M';
         console.log('Miss!');} 
 
-}
-
-function sinkCheck(ships, scoreCounter){
-    for(i = 0; i< ships.length; i++){
-        if(ships[i].size == 0){
-            ships = ships.filter(ship => ship.size=0); //removes ships that have been sunk
-            scoreCounter +=1; // Awards a point for sinking a ship
-            console.log('You sank a ship!');
-        }
-    } 
 };
+
 function winCheck(){
     if(myScore == 16 || enemyScore == 16){
         return true;
@@ -281,45 +291,85 @@ function shipCheck(direction, x, y, ship, ){
         } 
         return  x + ship.size < (gridSize -1) ? true : false
     } 
-}
-        
-//Game
+};
 
-let playFlag = true
-
-while(playFlag){
-    for(i = 0; i < myShips.length; i++){//Place USER ships
-            randLocation(myGrid, gridSize, myShips[i])
-          //Place CPU Ships
-            randLocation(enemyGrid, gridSize, enemyShips[i])
-    };
-
-    while(!winCheck()){
-        //user turn
-        let x = rs.questionInt(`Enter the X coordinate for attack:`);
-        let y = rs.questionInt(`Enter the Y coordinate for attack:`);
-        attack(x,y,myFire, enemyGrid,);
-        printGrid(enemyGrid, true);
-        
-        //CPU turn
-        console.log('My Turn!');
-        attack(randInt(gridSize),randInt(gridSize), enemyFire, myGrid, true);
-        printGrid(myGrid);
-    };
-
-    //Confirm Winner
-    if(myScore == 16){
-        console.log('You Sank My Battleships!')
-    }
-    if(enemyScore == 16){
-        console.log('I Sank Your Battleships!')
-    }
+function getLetter(obj, val) {
+    return Object.keys(obj).find(key => obj[key] === val);
+};
+  
+function getCoords(){
+    let valid = false;
+    while(!valid){
+        let coordStr = rs.question(`Enter the coordinate for attack:(eg: A1)`);
     
-    //Asks To Restart Game
-    if(rs.keyInYN('Do you want to play again? Y/N')){
-        playFlag = true
-    } else{
-        playFlag = false
+    let coordsArr = [];
+    coordsArr = coordStr.split('');
+    let xCoord = coordsArr[0].toUpperCase();
+
+    let x = coordKey[`${xCoord}`];
+    let y = coordsArr[1];
+    if(y > gridSize-1 || x > gridSize-1 || xCoord in coordKey == false ||
+        coordsArr.length != 2){
+        console.log("That's out of bounds!");
+        valid = false;
+    } else {
+        valid = true
+        console.log(x, y)
+        return [x,y]
+    }
     }
 };
+//Game
+function playGame() {
+    const myGrid = createGrid(gridSize);
+    const enemyGrid = createGrid(gridSize);
+    for(i = 0; i < myShips.length; i++){
+        //Place USER ships
+        randLocation(myGrid, gridSize, myShips[i]);
+        //Place CPU Ships
+        randLocation(enemyGrid, gridSize, enemyShips[i]);
+    };
+    
+    while(playFlag){
+        
+
+        while(!winCheck()){
+            //user turn
+            [x ,y] = getCoords()
+
+            attack(x,y,myFire, enemyGrid,);
+            printGrid(enemyGrid);
+            
+            //CPU turn
+            console.log('My Turn!');
+            attack(randInt(gridSize),randInt(gridSize), enemyFire, myGrid, true);
+            printGrid(myGrid);
+        };
+
+        //Confirm Winner
+        if(myScore == 16){
+            console.log('You Sank My Battleships!');
+            playFlag= false
+        };
+        if(enemyScore == 16){
+            console.log('I Sank Your Battleships!');
+            playFlag = false
+        };
+        
+        
+    };
+    //Asks To Restart Game
+        if(rs.keyInYN('You have destroyed all battleships. Would you like to play again? Y/N')){
+            playFlag = true
+            myScore=0
+            enemyScore = 0;
+            fireList = []
+            playGame();
+        }else{
+            playFlag = false;
+        };
+ };
+
+ playGame()
+
  
