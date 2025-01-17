@@ -1,6 +1,6 @@
 # Battleship Game
 
-A text-based Battleship game that runs in the terminal using Node.js and the `readline-sync` module. This project demonstrates progressive development, with four versions of the game getting progressively more advanced. The final version, `Battleship4.js`, includes a full text-based user interface.
+A text-based Battleship game that runs in the terminal using Node.js and the `readline-sync` module. This project demonstrates progressive development, with three versions of the game getting progressively more advanced. The final version, `Battleship4.js`, includes a full text-based user interface.
 
 ### Creator:
 
